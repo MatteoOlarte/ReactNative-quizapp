@@ -2,8 +2,8 @@ import { firebase } from "@/config/config";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 export type QuizDoc = {
-	categories?: { [key: string]: string };
-};
+  categories: QuizCategory[]
+}
 
 export type Question = {
 	category: string;
@@ -15,7 +15,16 @@ export type Question = {
 	option4: string;
 };
 
-export async function fetchAllCategories(): Promise<string[]> {
+export type QuizCategory = {
+  colorbg?: string,
+  coloron?: string,
+  name: string
+  ref: string
+}
+
+
+
+export async function fetchAllCategories(): Promise<QuizCategory[]> {
 	try {
 		let firestore = firebase.firestore();
     let docRef = doc(firestore, 'quiz-app', 'quizzes');
@@ -24,11 +33,14 @@ export async function fetchAllCategories(): Promise<string[]> {
 
     if (!docSnap.exists()) return [];
 
-    data = docSnap.data() as QuizDoc;
-
-    if (data.categories === undefined) return [];
-  
-		return Object.keys(data.categories)
+    data = docSnap.data() as QuizDoc
+    
+		return data.categories.map(element => ({
+      colorbg: element.colorbg,
+      coloron: element.coloron,
+      name: element.name,
+      ref: element.ref,
+    }))
 	} catch (e) {
     console.log(e);
 		throw e;

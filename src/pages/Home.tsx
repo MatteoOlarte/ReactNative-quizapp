@@ -1,4 +1,5 @@
 import { useHomeContext } from "@/context/homePageContext";
+import { type QuizCategory } from "@/models/quiz";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Layout } from "@ui-kitten/components";
@@ -14,12 +15,7 @@ type RootStackParamList = {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Home() {
-	const nav = useNavigation<NavigationProp>();
 	const context = useHomeContext();
-
-	const navigateTo = (category: string) => {
-		nav.navigate("Playground", { category: category });
-	};
 
 	return (
 		<Layout style={styles.container}>
@@ -35,10 +31,16 @@ export default function Home() {
 	);
 }
 
-function CategoryItem({ item }: { item: string }) {
+function CategoryItem({ item }: { item: QuizCategory }) {
+	const nav = useNavigation<NavigationProp>();
+
+	const navigateTo = (category: string) => {
+		nav.navigate("Playground", { category: category });
+	};
+
 	return (
-		<TouchableOpacity style={styles.category}>
-			<Text>{item}</Text>
+		<TouchableOpacity style={[styles.category, { backgroundColor: item.colorbg }]} onPress={() => navigateTo("IDk")}>
+			<Text style={[styles.categoryTitle, { color: item.coloron }]}>{item.name}</Text>
 		</TouchableOpacity>
 	);
 }
@@ -51,9 +53,12 @@ const styles = StyleSheet.create({
 		paddingTop: 8,
 	},
 	category: {
-		backgroundColor: "red",
 		borderRadius: 8,
 		padding: 10,
-		height: 150
+		height: 150,
+	},
+	categoryTitle: {
+		fontSize: 20,
+		fontWeight: "semibold",
 	},
 });

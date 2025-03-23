@@ -1,23 +1,24 @@
-import { fetchAllCategories } from "@/models/quiz";
+import { fetchAllCategories, type QuizCategory } from "@/models/quiz";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface HomeContextTypes {
-	categories?: string[];
+	categories?: QuizCategory[];
 }
 
 export const HomeContext = createContext<HomeContextTypes | undefined>(undefined);
 
 export const HomeContextProvider = ({ children }: React.PropsWithChildren) => {
-	const [categories, setCategories] = useState<string[] | undefined>(undefined);
+	const [categories, setCategories] = useState<QuizCategory[] | undefined>(undefined);
+
+	const fetchData = async () => {
+		setCategories(await fetchAllCategories());
+	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			setCategories(await fetchAllCategories());
-		};
 		fetchData();
 	}, []);
 
-	return <HomeContext.Provider value={{ categories }}>{ children }</HomeContext.Provider>;
+	return <HomeContext.Provider value={{ categories }}>{children}</HomeContext.Provider>;
 };
 
 export const useHomeContext = () => {
