@@ -1,15 +1,15 @@
+import { RootStackParamList } from "@/config/App";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 
-interface PlaygroundProps {
-	route?: any;
-}
+interface PlaygroundProps extends NativeStackScreenProps<RootStackParamList, "Playground"> {}
 
 export default function Playground({ route }: PlaygroundProps) {
 	const { category } = route.params;
 
-  console.log(category);
-  
+	console.log(category);
+
 	return (
 		<View style={styles.container}>
 			<Text>{"category"}</Text>

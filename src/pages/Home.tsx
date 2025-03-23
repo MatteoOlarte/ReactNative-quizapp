@@ -33,7 +33,7 @@ function CategoryItem({ item }: { item: QuizCategory }) {
 	};
 
 	return (
-		<TouchableOpacity style={[styles.category, { backgroundColor: item.colorbg }]} onPress={() => navigateTo(item.ref)}>
+		<TouchableOpacity style={[styles.category, { backgroundColor: item.colorbg }]} onPress={() => navigateTo(item.ref.id)}>
 			<Text style={[styles.categoryTitle, { color: item.coloron }]}>{item.name}</Text>
 		</TouchableOpacity>
 	);
