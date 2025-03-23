@@ -12,7 +12,7 @@ export default function App() {
 			<NavigationContainer>
 				<Stack.Navigator>
 					<Stack.Screen name="Home" component={HomePageWithContext} />
-					<Stack.Screen name="Playground" component={Playground} />
+					<Stack.Screen name="Playground" component={PlaygroundWithContext} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</ApplicationProvider>
@@ -22,8 +22,16 @@ export default function App() {
 const HomePageWithContext = () => {
 	return (
 		<HomeContextProvider>
-			<Home/>
+			<Home />
 		</HomeContextProvider>
+	);
+};
+
+const PlaygroundWithContext = () => {
+	return (
+		<>
+			<Playground />
+		</>
 	);
 };
 

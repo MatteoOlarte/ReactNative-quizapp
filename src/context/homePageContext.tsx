@@ -1,7 +1,7 @@
 import { fetchAllCategories, type QuizCategory } from "@/models/quiz";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface HomeContextTypes {
+export interface HomeContextTypes {
 	categories?: QuizCategory[];
 }
 
