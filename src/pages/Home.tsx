@@ -1,3 +1,4 @@
+import LoadingView from "@/components/LoadingView";
 import { RootStackParamList } from "@/config/App";
 import { useHomeContext } from "@/context/homePageContext";
 import { type QuizCategory } from "@/models/quiz";
@@ -5,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Layout } from "@ui-kitten/components";
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { FlatGrid } from "react-native-super-grid";
 
 export default function Home() {
@@ -44,15 +45,6 @@ function CategoryItem({ item }: { item: QuizCategory }) {
 	);
 }
 
-const LoadingView = () => {
-	return (
-		<View style={styles.loadingContainer}>
-			<ActivityIndicator size="large" />
-			<Text>Cargando Preguntas...</Text>
-		</View>
-	);
-};
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -65,10 +57,5 @@ const styles = StyleSheet.create({
 	categoryTitle: {
 		fontSize: 20,
 		fontWeight: "semibold",
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
 	},
 });

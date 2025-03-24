@@ -1,20 +1,11 @@
+import LoadingView from "@/components/LoadingView";
 import { RootStackParamList } from "@/config/App";
 import { usePlaygroundContext } from "@/context/playgroundContext";
 import { type Question } from "@/models/quiz";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import {
-	ActivityIndicator,
-	Animated,
-	Button,
-	FlatList,
-	Platform,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Animated, Button, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export interface PlaygroundProps extends NativeStackScreenProps<RootStackParamList, "Playground"> {}
 
@@ -51,15 +42,6 @@ export default function Playground({ route }: PlaygroundProps) {
 	);
 }
 
-const LoadingView = () => {
-	return (
-		<View style={styles.loadingContainer}>
-			<ActivityIndicator size="large" />
-			<Text>Cargando Preguntas...</Text>
-		</View>
-	);
-};
-
 const QuestionItem = ({ item, index }: QuestionItemProps) => {
 	const context = usePlaygroundContext();
 	const options = [item.option1, item.option2, item.option3, item.option4];
@@ -71,7 +53,7 @@ const QuestionItem = ({ item, index }: QuestionItemProps) => {
 	};
 
 	return (
-		<View style={styles.questionItem}>
+		<View>
 			<Text style={styles.questionItemTitle}>
 				{index + 1}. {item.question}
 			</Text>
@@ -152,17 +134,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	questionList: {
 		flex: 1,
 		paddingHorizontal: 16,
 		width: "100%",
 	},
-	questionItem: {},
 	questionItemTitle: {
 		fontSize: 17,
 		fontWeight: "600",
