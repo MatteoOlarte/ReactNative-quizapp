@@ -3,8 +3,18 @@ import { usePlaygroundContext } from "@/context/playgroundContext";
 import { type Question } from "@/models/quiz";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Button, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+	ActivityIndicator,
+	Animated,
+	Button,
+	FlatList,
+	Platform,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 
 export interface PlaygroundProps extends NativeStackScreenProps<RootStackParamList, "Playground"> {}
 
@@ -24,14 +34,7 @@ export default function Playground({ route }: PlaygroundProps) {
 						style={styles.questionList}
 						data={context.questions}
 						renderItem={({ item, index }) => <QuestionItem item={item} index={index} />}
-					/>
-
-					<Button
-						onPress={(e) => {
-							context.submitQuiz();
-						}}
-						title="Terminar"
-						accessibilityLabel="Learn more about this purple button"
+						ListFooterComponent={QuizResultsFooter}
 					/>
 				</>
 			) : (
@@ -94,6 +97,49 @@ const QuestionItem = ({ item, index }: QuestionItemProps) => {
 	);
 };
 
+const QuizResultsFooter = () => {
+	const context = usePlaygroundContext();
+	const fadeAnim = useRef(new Animated.Value(0)).current;
+
+	useEffect(() => {
+		if (context.showResults) {
+			Animated.timing(fadeAnim, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [context.showResults, fadeAnim]);
+
+	return (
+		<View style={styles.resultsFooter}>
+			<Button
+				onPress={(e) => {
+					context.submitQuiz();
+				}}
+				title="Terminar"
+				accessibilityLabel="Learn more about this purple button"
+			/>
+
+			{context.showResults && (
+				<Animated.View style={[styles.resultsContainer, { opacity: fadeAnim }]}>
+					<Text style={styles.resultsTitle}>¡Quiz Completado!</Text>
+					<Text style={styles.resultsScore}>
+						Calificación: {context.currentScore} / {context.questions.length}
+					</Text>
+					<Text style={styles.resultsMessage}>
+						{context.currentScore === context.questions.length
+							? "¡Perfecto! 🎉"
+							: context.currentScore >= context.questions.length / 2
+							? "¡Buen trabajo! 👏"
+							: "¡Sigue practicando! 💪"}
+					</Text>
+				</Animated.View>
+			)}
+		</View>
+	);
+};
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -133,7 +179,7 @@ const styles = StyleSheet.create({
 		}),
 		borderColor: Platform.select({
 			ios: "#007AFF",
-			android: "#34C759",
+			android: "#33ca59",
 		}),
 	},
 	correctOption: {
@@ -147,5 +193,36 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		color: "#666",
 		marginBottom: 12,
+	},
+	resultsFooter: {
+		marginVertical: 20,
+	},
+	resultsContainer: {
+		marginTop: 16,
+		padding: 16,
+		backgroundColor: "#f9f9f9",
+		borderRadius: 12,
+		alignItems: "center",
+		width: "100%",
+	},
+	resultsTitle: {
+		fontSize: 20,
+		fontWeight: "700",
+		color: "#333",
+		marginBottom: 8,
+	},
+	resultsScore: {
+		fontSize: 18,
+		fontWeight: "500",
+		color: Platform.select({
+      ios: "#007AFF",
+      android: "#33ca59"
+    }),
+		marginBottom: 8,
+	},
+	resultsMessage: {
+		fontSize: 16,
+		color: "#666",
+		textAlign: "center",
 	},
 });
