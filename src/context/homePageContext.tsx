@@ -3,22 +3,26 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 export interface HomeContextTypes {
 	categories?: QuizCategory[];
+	isLoading: boolean;
 }
 
 export const HomeContext = createContext<HomeContextTypes | undefined>(undefined);
 
 export const HomeContextProvider = ({ children }: React.PropsWithChildren) => {
 	const [categories, setCategories] = useState<QuizCategory[] | undefined>(undefined);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const fetchData = async () => {
+		setIsLoading(true);
 		setCategories(await fetchAllCategories());
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
 		fetchData();
 	}, []);
 
-	return <HomeContext.Provider value={{ categories }}>{children}</HomeContext.Provider>;
+	return <HomeContext.Provider value={{ categories, isLoading }}>{children}</HomeContext.Provider>;
 };
 
 export const useHomeContext = () => {
