@@ -7,6 +7,8 @@ export interface PlaygroundContextTypes {
 	isLoading: boolean;
 	showResults: boolean;
 	currentScore: number;
+	timeRemaining: number;
+	TOTAL_TIME: number;
 	setQuizID: (value: string) => void;
 	selectOption: (index: number, option: number) => void;
 	submitQuiz: () => void;
@@ -19,12 +21,14 @@ type SelectedOptionType = {
 export const PlaygroundContext = createContext<PlaygroundContextTypes | undefined>(undefined);
 
 export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren) => {
+	const TOTAL_TIME = 5 * 60 * 1000;
 	const [quizID, setQuizID] = useState<string | undefined>();
 	const [questions, setQuestions] = useState<Question[]>([]);
 	const [selectedOptions, setSelectedOptions] = useState<SelectedOptionType>({});
 	const [currentScore, setCurrentScore] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [showResults, setShowResults] = useState<boolean>(false);
+	const [timeRemaining, setTimeRemaining] = useState<number>(TOTAL_TIME);
 
 	const fetchQuizData = async () => {
 		setIsLoading(true);
@@ -54,15 +58,40 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	};
 
 	useEffect(() => {
+		const startTime = Date.now();
+		const timer = setInterval(() => {
+			const elapsed = Date.now() - startTime;
+			const remaining = Math.max(0, TOTAL_TIME - elapsed);
+			setTimeRemaining(remaining);
+
+			if (remaining === 0) {
+				submitQuiz(); // Auto-submit when time runs out
+				clearInterval(timer);
+			}
+		}, 1000);
+
 		setShowResults(false);
 		fetchQuizData();
+
+		return () => clearInterval(timer);
 	}, [quizID]);
 
 	useEffect(() => console.log(currentScore), [currentScore]);
 
 	return (
 		<PlaygroundContext.Provider
-			value={{ quizID, questions, isLoading, showResults, currentScore, setQuizID, selectOption, submitQuiz }}
+			value={{
+				quizID,
+				questions,
+				isLoading,
+				showResults,
+				currentScore,
+				timeRemaining,
+				TOTAL_TIME,
+				setQuizID,
+				selectOption,
+				submitQuiz,
+			}}
 		>
 			{children}
 		</PlaygroundContext.Provider>

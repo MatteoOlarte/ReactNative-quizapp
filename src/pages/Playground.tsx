@@ -3,6 +3,7 @@ import { RootStackParamList } from "@/config/App";
 import { usePlaygroundContext } from "@/context/playgroundContext";
 import { type Question } from "@/models/quiz";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import dateFormat from "date-and-time";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Button, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -18,7 +19,10 @@ export default function Playground({ route }: PlaygroundProps) {
 	const context = usePlaygroundContext();
 	const { category } = route.params;
 
-	useEffect(() => context.setQuizID(category), []);
+	useEffect(() => {
+		context.setQuizID(category);
+		// set title
+	}, []);
 
 	if (context.isLoading) return <LoadingView />;
 
@@ -26,6 +30,8 @@ export default function Playground({ route }: PlaygroundProps) {
 		<View style={styles.container}>
 			{context.questions.length > 0 ? (
 				<View>
+					<QuizProgressBar />
+
 					<FlatList
 						style={styles.questionList}
 						data={context.questions}
@@ -41,6 +47,25 @@ export default function Playground({ route }: PlaygroundProps) {
 		</View>
 	);
 }
+
+const QuizProgressBar = () => {
+	const context = usePlaygroundContext();
+	const percentage = (context.timeRemaining / context.TOTAL_TIME) * 100;
+	const totalT = dateFormat.format(new Date(context.TOTAL_TIME), "mm:ss");
+	const remainingT = dateFormat.format(new Date(context.timeRemaining), "mm:ss");
+
+	return (
+		<View style={styles.timerContainer}>
+			<Text style={styles.timerText}>{remainingT}</Text>
+
+			<View style={styles.progressBarContainer}>
+				<View style={[styles.progressBar, { width: `${percentage}%` }]} />
+			</View>
+
+			<Text style={styles.timerText}>{totalT}</Text>
+		</View>
+	);
+};
 
 const QuestionItem = ({ item, index }: QuestionItemProps) => {
 	const context = usePlaygroundContext();
@@ -206,5 +231,27 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: "#666",
 		textAlign: "center",
+	},
+	timerContainer: {
+		margin: 16,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 8,
+	},
+	progressBarContainer: {
+		height: 6,
+		backgroundColor: "#D2D2D7",
+		borderRadius: 3,
+		flexGrow: 1,
+	},
+	progressBar: {
+		height: "100%",
+		backgroundColor: "#007AFF",
+		borderRadius: 3,
+	},
+	timerText: {
+		fontSize: 13,
+		color: "#666",
 	},
 });

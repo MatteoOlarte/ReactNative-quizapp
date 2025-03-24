@@ -18,6 +18,7 @@
     "@react-navigation/native-stack": "^7.3.1",
     "@react-navigation/stack": "^7.2.1",
     "@ui-kitten/components": "^5.3.1",
+    "date-and-time": "^3.6.0",
     "dotenv": "^16.4.7",
     "expo": "~52.0.39",
     "expo-status-bar": "~2.0.1",
