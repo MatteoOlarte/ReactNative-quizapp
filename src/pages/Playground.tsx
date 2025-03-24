@@ -76,7 +76,11 @@ const QuestionItem = ({ item, index }: QuestionItemProps) => {
 			<Text style={styles.difficulty}>Difficulty: {item.difficulty}</Text>
 			{options.map((option, idx) => (
 				<TouchableOpacity
-					style={[styles.optionButton, selectedOption === option && styles.selectedOption]}
+					style={[
+						styles.optionButton,
+						selectedOption === option && styles.selectedOption,
+						context.showResults && selectedOption !== option && idx === item.correctOption && styles.correctOption,
+					]}
 					key={idx}
 					disabled={context.showResults}
 					onPress={() => handlePress(option)}
@@ -131,6 +135,9 @@ const styles = StyleSheet.create({
 			ios: "#007AFF",
 			android: "#34C759",
 		}),
+	},
+	correctOption: {
+		backgroundColor: "gray",
 	},
 	selectedOptionText: {
 		color: "white",
