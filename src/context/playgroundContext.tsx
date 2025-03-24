@@ -1,5 +1,5 @@
 import { Question, fetchQuestionsFromQuiz } from "@/models/quiz";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
 export interface PlaygroundContextTypes {
 	quizID?: string;
@@ -31,7 +31,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [showResults, setShowResults] = useState<boolean>(false);
 	const [timeRemaining, setTimeRemaining] = useState<number>(TOTAL_TIME);
-
+	const timerRef = useRef<NodeJS.Timeout | undefined>();
 	const fetchQuizData = async () => {
 		setIsLoading(true);
 		if (quizID === undefined) return;
@@ -63,32 +63,29 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 		setCurrentPoints(points);
 		setCurrentScore(correntAnswers);
 		setShowResults(true);
+
+		if (timerRef) clearInterval(timerRef.current);
 	};
 
 	useEffect(() => {
 		const startTime = Date.now();
-		const timer = setInterval(() => {
+		
+		timerRef.current = setInterval(() => {
 			const elapsed = Date.now() - startTime;
 			const remaining = Math.max(0, TOTAL_TIME - elapsed);
 			setTimeRemaining(remaining);
 
-			if (remaining === 0 ) {
+			if (remaining === 0) {
 				submitQuiz(); // Auto-submit when time runs out
-				clearInterval(timer);
-			}
-			if (showResults) {
-				clearInterval(timer);
-				return
+				clearInterval(timerRef.current);
 			}
 		}, 1000);
 
 		setShowResults(false);
 		fetchQuizData();
 
-		return () => clearInterval(timer);
+		return () => clearInterval(timerRef.current);
 	}, [quizID]);
-
-	useEffect(() => console.log(currentScore), [currentScore]);
 
 	return (
 		<PlaygroundContext.Provider

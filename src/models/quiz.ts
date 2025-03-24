@@ -67,7 +67,7 @@ export async function fetchQuestionsFromQuiz(quizID: string): Promise<Question[]
 			} as Question;
 		});
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 		throw e;
 	}
 }
