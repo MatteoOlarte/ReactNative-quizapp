@@ -82,7 +82,7 @@ const QuestionItem = ({ item, index }: QuestionItemProps) => {
 					style={[
 						styles.optionButton,
 						selectedOption === option && styles.selectedOption,
-						context.showResults && selectedOption !== option && idx === item.correctOption && styles.correctOption,
+						context.showResults && selectedOption !== option && idx === (item.correctOption - 1) && styles.correctOption,
 					]}
 					key={idx}
 					disabled={context.showResults}
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
 	questionList: {
 		flex: 1,
 		paddingHorizontal: 16,
+    width: "100%"
 	},
 	questionItem: {},
 	questionItemTitle: {
