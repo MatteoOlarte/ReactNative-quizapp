@@ -18,6 +18,11 @@ import {
 
 export interface PlaygroundProps extends NativeStackScreenProps<RootStackParamList, "Playground"> {}
 
+interface QuestionItemProps {
+	item: Question;
+	index: number;
+}
+
 export default function Playground({ route }: PlaygroundProps) {
 	const context = usePlaygroundContext();
 	const { category } = route.params;
@@ -29,14 +34,14 @@ export default function Playground({ route }: PlaygroundProps) {
 	return (
 		<View style={styles.container}>
 			{context.questions.length > 0 ? (
-				<>
+				<View>
 					<FlatList
 						style={styles.questionList}
 						data={context.questions}
 						renderItem={({ item, index }) => <QuestionItem item={item} index={index} />}
 						ListFooterComponent={QuizResultsFooter}
 					/>
-				</>
+				</View>
 			) : (
 				<Text>No questions available</Text>
 			)}
@@ -54,11 +59,6 @@ const LoadingView = () => {
 		</View>
 	);
 };
-
-interface QuestionItemProps {
-	item: Question;
-	index: number;
-}
 
 const QuestionItem = ({ item, index }: QuestionItemProps) => {
 	const context = usePlaygroundContext();
@@ -82,7 +82,7 @@ const QuestionItem = ({ item, index }: QuestionItemProps) => {
 					style={[
 						styles.optionButton,
 						selectedOption === option && styles.selectedOption,
-						context.showResults && selectedOption !== option && idx === (item.correctOption - 1) && styles.correctOption,
+						context.showResults && selectedOption !== option && idx === item.correctOption - 1 && styles.correctOption,
 					]}
 					key={idx}
 					disabled={context.showResults}
@@ -113,20 +113,15 @@ const QuizResultsFooter = () => {
 
 	return (
 		<View style={styles.resultsFooter}>
-			<Button
-				onPress={(e) => {
-					context.submitQuiz();
-				}}
-				title="Terminar"
-				accessibilityLabel="Learn more about this purple button"
-			/>
-
 			{context.showResults && (
 				<Animated.View style={[styles.resultsContainer, { opacity: fadeAnim }]}>
 					<Text style={styles.resultsTitle}>¡Quiz Completado!</Text>
 					<Text style={styles.resultsScore}>
 						Calificación: {context.currentScore} / {context.questions.length}
 					</Text>
+					{/* <Text style={styles.resultsScore}>
+						Puntuación : 0 pts
+					</Text> */}
 					<Text style={styles.resultsMessage}>
 						{context.currentScore === context.questions.length
 							? "¡Perfecto! 🎉"
@@ -135,6 +130,16 @@ const QuizResultsFooter = () => {
 							: "¡Sigue practicando! 💪"}
 					</Text>
 				</Animated.View>
+			)}
+
+			{!context.showResults && (
+				<Button
+					onPress={(_) => {
+						context.submitQuiz();
+					}}
+					title="Terminar"
+					accessibilityLabel="Learn more about this purple button"
+				/>
 			)}
 		</View>
 	);
@@ -155,7 +160,7 @@ const styles = StyleSheet.create({
 	questionList: {
 		flex: 1,
 		paddingHorizontal: 16,
-    width: "100%"
+		width: "100%",
 	},
 	questionItem: {},
 	questionItemTitle: {
@@ -216,9 +221,9 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: "500",
 		color: Platform.select({
-      ios: "#007AFF",
-      android: "#33ca59"
-    }),
+			ios: "#007AFF",
+			android: "#33ca59",
+		}),
 		marginBottom: 8,
 	},
 	resultsMessage: {
