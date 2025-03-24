@@ -32,6 +32,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	const [showResults, setShowResults] = useState<boolean>(false);
 	const [timeRemaining, setTimeRemaining] = useState<number>(TOTAL_TIME);
 	const timerRef = useRef<NodeJS.Timeout | undefined>();
+	
 	const fetchQuizData = async () => {
 		setIsLoading(true);
 		if (quizID === undefined) return;
@@ -69,7 +70,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 
 	useEffect(() => {
 		const startTime = Date.now();
-		
+
 		timerRef.current = setInterval(() => {
 			const elapsed = Date.now() - startTime;
 			const remaining = Math.max(0, TOTAL_TIME - elapsed);
