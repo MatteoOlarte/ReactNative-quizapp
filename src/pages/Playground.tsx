@@ -247,7 +247,10 @@ const styles = StyleSheet.create({
 	},
 	progressBar: {
 		height: "100%",
-		backgroundColor: "#007AFF",
+		backgroundColor: Platform.select({
+			ios: "#007AFF",
+			android: "#33ca59",
+		}),
 		borderRadius: 3,
 	},
 	timerText: {
