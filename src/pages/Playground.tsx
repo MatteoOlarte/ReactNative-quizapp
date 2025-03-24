@@ -1,6 +1,6 @@
 import { RootStackParamList } from "@/config/App";
 import { usePlaygroundContext } from "@/context/playgroundContext";
-import { Question } from "@/models/quiz";
+import { type Question } from "@/models/quiz";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
