@@ -1,18 +1,18 @@
 import { firebase } from "@/config/config";
-import { doc, DocumentReference, getDoc } from "firebase/firestore";
+import { collection, doc, DocumentReference, getDoc, getDocs } from "firebase/firestore";
 
 export type QuizDoc = {
 	categories: QuizCategory[];
 };
 
 export type Question = {
-	category: string;
-	correctOption: number;
-	difficulty: string;
 	option1: string;
 	option2: string;
 	option3: string;
 	option4: string;
+	correctOption: number;
+	difficulty: string;
+  question: string;
 };
 
 export type QuizCategory = {
@@ -33,14 +33,42 @@ export async function fetchAllCategories(): Promise<QuizCategory[]> {
 
 		data = docSnap.data() as QuizDoc;
 
-		console.log(data);
-
 		return data.categories.map((element) => ({
 			colorbg: element.colorbg,
 			coloron: element.coloron,
 			name: element.name,
 			ref: element.ref,
 		}));
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+}
+
+export async function fetchQuestionsFromQuiz(quizID: string): Promise<Question[]> {
+	try {
+		console.log("fetchQuestionsFromQuiz: call");
+
+		let firestore = firebase.firestore();
+		let colRef = collection(firestore, "quiz-app", "quizzes", "test-quiz", quizID, "questions");
+		let docsSnap = await getDocs(colRef);
+
+		console.log("fetchQuestionsFromQuiz: docsSnap done");
+		if (docsSnap.empty) return [];
+
+		return docsSnap.docs.map((doc) => {
+			const data = doc.data();
+
+			return {
+				option1: data.option1,
+				option2: data.option2,
+				option3: data.option3,
+				option4: data.option4,
+				correctOption: data.correctOption,
+				difficulty: data.difficulty,
+        question: data.question
+			} as Question;
+		});
 	} catch (e) {
 		console.log(e);
 		throw e;

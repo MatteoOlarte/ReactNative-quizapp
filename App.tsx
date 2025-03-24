@@ -4,6 +4,7 @@ import Home from "@/pages/Home";
 import Playground from "@/pages/Playground";
 import * as eva from "@eva-design/eva";
 import { NavigationContainer } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ApplicationProvider } from "@ui-kitten/components";
 
@@ -20,7 +21,7 @@ export default function App() {
 			<NavigationContainer>
 				<Stack.Navigator initialRouteName="Home">
 					<Stack.Screen name="Home" component={HomePageWithContext} />
-					<Stack.Screen name="Playground" component={Playground} />
+					<Stack.Screen name="Playground" component={PlaygroundWithContext} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</ApplicationProvider>
@@ -35,11 +36,10 @@ const HomePageWithContext = () => {
 	);
 };
 
-// const PlaygroundWithContext = () => {
-// 	return (
-// 		<PlaygroundContextProvider>
-// 			<Playground />
-// 		</PlaygroundContextProvider>
-// 	);
-// };
-
+const PlaygroundWithContext = ({ navigation, route }: NativeStackScreenProps<RootStackParamList, "Playground">) => {
+	return (
+		<PlaygroundContextProvider>
+			<Playground navigation={navigation} route={route} />
+		</PlaygroundContextProvider>
+	);
+};
