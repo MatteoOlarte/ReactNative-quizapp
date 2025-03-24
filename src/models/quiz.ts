@@ -12,7 +12,7 @@ export type Question = {
 	option4: string;
 	correctOption: number;
 	difficulty: string;
-  question: string;
+	question: string;
 };
 
 export type QuizCategory = {
@@ -66,7 +66,7 @@ export async function fetchQuestionsFromQuiz(quizID: string): Promise<Question[]
 				option4: data.option4,
 				correctOption: data.correctOption,
 				difficulty: data.difficulty,
-        question: data.question
+				question: data.question,
 			} as Question;
 		});
 	} catch (e) {

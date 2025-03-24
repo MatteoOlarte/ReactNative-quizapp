@@ -27,7 +27,9 @@ export default function Playground({ route }: PlaygroundProps) {
 					/>
 
 					<Button
-						onPress={(e) => {context.submitQuiz()}}
+						onPress={(e) => {
+							context.submitQuiz();
+						}}
 						title="Terminar"
 						accessibilityLabel="Learn more about this purple button"
 					/>

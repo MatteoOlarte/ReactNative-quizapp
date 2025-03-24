@@ -36,7 +36,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	};
 
 	const selectOption = (index: number, option: number) => {
-    console.log(`Selected: ${index} option ${option}`);
+		console.log(`Selected: ${index} option ${option}`);
 		setSelectedOptions((__prev) => ({
 			...__prev,
 			[index]: option,
@@ -47,16 +47,16 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 		let correntAnswers = 0;
 
 		questions.forEach((q, index) => {
-      console.log(`question: ${q.question}`);
-      console.log(` correct: ${q.correctOption}`);
-      console.log(` select: ${selectedOptions[index]}`);
+			console.log(`question: ${q.question}`);
+			console.log(` correct: ${q.correctOption}`);
+			console.log(` select: ${selectedOptions[index]}`);
 
 			if (selectedOptions[index] == q.correctOption) correntAnswers++;
 		});
 
 		setCurrentScore(correntAnswers);
 		setShowResults(true);
-    console.log(correntAnswers);
+		console.log(correntAnswers);
 	};
 
 	useEffect(() => {
@@ -64,7 +64,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 		fetchQuizData();
 	}, [quizID]);
 
-  useEffect(() => console.log(currentScore), [currentScore])
+	useEffect(() => console.log(currentScore), [currentScore]);
 
 	return (
 		<PlaygroundContext.Provider
