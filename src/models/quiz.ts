@@ -47,13 +47,10 @@ export async function fetchAllCategories(): Promise<QuizCategory[]> {
 
 export async function fetchQuestionsFromQuiz(quizID: string): Promise<Question[]> {
 	try {
-		console.log("fetchQuestionsFromQuiz: call");
-
 		let firestore = firebase.firestore();
 		let colRef = collection(firestore, "quiz-app", "quizzes", "test-quiz", quizID, "questions");
 		let docsSnap = await getDocs(colRef);
 
-		console.log("fetchQuestionsFromQuiz: docsSnap done");
 		if (docsSnap.empty) return [];
 
 		return docsSnap.docs.map((doc) => {

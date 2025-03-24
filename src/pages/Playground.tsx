@@ -126,9 +126,7 @@ const QuizResultsFooter = () => {
 					<Text style={styles.resultsScore}>
 						Calificación: {context.currentScore} / {context.questions.length}
 					</Text>
-					{/* <Text style={styles.resultsScore}>
-						Puntuación : 0 pts
-					</Text> */}
+					<Text style={styles.resultsScore}>Puntuación : {context.currentPoints} pts</Text>
 					<Text style={styles.resultsMessage}>
 						{context.currentScore === context.questions.length
 							? "¡Perfecto! 🎉"

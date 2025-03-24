@@ -8,6 +8,7 @@ export interface PlaygroundContextTypes {
 	showResults: boolean;
 	currentScore: number;
 	timeRemaining: number;
+	currentPoints: number;
 	TOTAL_TIME: number;
 	setQuizID: (value: string) => void;
 	selectOption: (index: number, option: number) => void;
@@ -26,6 +27,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	const [questions, setQuestions] = useState<Question[]>([]);
 	const [selectedOptions, setSelectedOptions] = useState<SelectedOptionType>({});
 	const [currentScore, setCurrentScore] = useState<number>(0);
+	const [currentPoints, setCurrentPoints] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [showResults, setShowResults] = useState<boolean>(false);
 	const [timeRemaining, setTimeRemaining] = useState<number>(TOTAL_TIME);
@@ -48,11 +50,17 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 
 	const submitQuiz = () => {
 		let correntAnswers = 0;
+		let points = 0;
 
 		questions.forEach((q, index) => {
-			if (selectedOptions[index] == q.correctOption) correntAnswers++;
+			if (selectedOptions[index] == q.correctOption) {
+				correntAnswers++;
+				points += 10 * (q.difficulty === "hard" ? 1.5 : q.difficulty === "medium" ? 1.3 : 1);
+			}
 		});
 
+		points = Math.floor(points + timeRemaining / (1000 * questions.length));
+		setCurrentPoints(points);
 		setCurrentScore(correntAnswers);
 		setShowResults(true);
 	};
@@ -64,9 +72,13 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 			const remaining = Math.max(0, TOTAL_TIME - elapsed);
 			setTimeRemaining(remaining);
 
-			if (remaining === 0) {
+			if (remaining === 0 ) {
 				submitQuiz(); // Auto-submit when time runs out
 				clearInterval(timer);
+			}
+			if (showResults) {
+				clearInterval(timer);
+				return
 			}
 		}, 1000);
 
@@ -87,6 +99,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 				showResults,
 				currentScore,
 				timeRemaining,
+				currentPoints,
 				TOTAL_TIME,
 				setQuizID,
 				selectOption,
