@@ -19,9 +19,7 @@ export const UserAuthContextProvider = ({ children }: React.PropsWithChildren) =
 	const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
-	const fetchCurrentUser = async () => {
-		
-	};
+	const fetchCurrentUser = async () => {};
 
 	const registerUserWithEmailAndPassword = async (
 		name?: string,
@@ -59,7 +57,7 @@ export const UserAuthContextProvider = ({ children }: React.PropsWithChildren) =
 		try {
 			let user = await loginUserWithEmailAndPassword(email, password);
 
-			if (!user) throw Error();
+			if (!user) throw Error("No user");
 
 			setCurrentUser(user);
 		} catch (error) {
@@ -73,7 +71,10 @@ export const UserAuthContextProvider = ({ children }: React.PropsWithChildren) =
 		fetchCurrentUser();
 	}, []);
 
-	useEffect(() => {}, [currentUser]);
+	useEffect(() => {
+		if (currentUser === undefined) return;
+		currentUser.fetchPoints();
+	}, [currentUser]);
 
 	return (
 		<UserAuthContext.Provider

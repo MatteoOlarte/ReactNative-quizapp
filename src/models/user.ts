@@ -4,6 +4,7 @@ export default class User {
 	readonly id: string;
 	name: string;
 	email: string;
+	points?: number;
 
 	constructor(id: string, name: string, email: string) {
 		this.id = id;
@@ -15,6 +16,42 @@ export default class User {
 		let result = await loginUserWithEmailAndPassword(this.email, password);
 		return result;
 	}
+
+	async fetchPoints(): Promise<number> {
+		// If points are already cached, return them
+		if (this.points !== undefined) {
+			return this.points;
+		}
+
+		try {
+			const firestore = firebase.firestore();
+			let userRef = firestore.collection("quiz-app").doc("users").collection("users").doc(this.id);
+			let userDoc = await userRef.get();
+
+			// Check if the document exists
+			if (!userDoc.exists) {
+				throw new Error("User document does not exist");
+			}
+
+			// Get the points from the document
+			const data = userDoc.data();
+			const fetchedPoints = data?.points;
+
+			// Validate that points exist and are a number
+			if (typeof fetchedPoints !== "number") {
+				throw new Error("Points field is missing or invalid");
+			}
+
+			// Cache the points
+			this.points = fetchedPoints;
+      
+			return this.points;
+		} catch (error) {
+			throw new Error(`Failed to fetch points: ${error instanceof Error ? error.message : "Unknown error"}`);
+		}
+	}
+
+	async setPoints(): Promise<void> {}
 }
 
 export async function loginUserWithEmailAndPassword(email: string, password: string): Promise<User | null> {
@@ -25,7 +62,7 @@ export async function loginUserWithEmailAndPassword(email: string, password: str
 		let user = cred.user;
 
 		if (user) {
-			let document = await firestore.collection("users").doc(user.uid).get();
+			let document = await firestore.collection("quiz-app/users/users").doc(user.uid).get();
 			let data: any;
 
 			if (document.exists) {

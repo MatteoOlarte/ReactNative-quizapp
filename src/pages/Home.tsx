@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Layout } from "@ui-kitten/components";
 import React from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FlatGrid } from "react-native-super-grid";
 
 export default function Home() {
@@ -81,8 +81,8 @@ function UserProfileView() {
 	if (!contextUser.currentUser) return null;
 
 	return (
-		<Layout level="1" style={styles.userViewcontainer}>
-			<Layout style={Platform.OS === "ios" ? styles.iOSCard : styles.androidCard}>
+		<View style={styles.userViewcontainer}>
+			<View style={Platform.OS === "ios" ? styles.iOSCard : styles.androidCard}>
 				<Text style={Platform.OS === "ios" ? styles.iOSLabel : styles.androidLabel}>Name</Text>
 				<Text style={Platform.OS === "ios" ? styles.iOSText : styles.androidText}>{contextUser.currentUser.name}</Text>
 
@@ -91,11 +91,11 @@ function UserProfileView() {
 
 				<Text style={Platform.OS === "ios" ? styles.iOSLabel : styles.androidLabel}>Points</Text>
 
-				{/* <Text style={Platform.OS === 'ios' ? styles.iOSText : styles.androidText}>
-          {contextUser.currentUser?.points}
-        </Text> */}
-			</Layout>
-		</Layout>
+				<Text style={Platform.OS === 'ios' ? styles.iOSTextBlue : styles.androidText}>
+          {contextUser.currentUser?.points ?? 0} pts
+        </Text>
+			</View>
+		</View>
 	);
 }
 
@@ -130,38 +130,54 @@ const styles = StyleSheet.create({
 	},
 	iOSContainer: {
 		flex: 1,
-		backgroundColor: "#F5F5F5",
-		padding: 20,
-		justifyContent: "center",
+		backgroundColor: "#F2F2F7", // System Background (Light)
+		paddingHorizontal: 16,
+		paddingTop: 44, // Espacio para la barra de estado
 	},
 	iOSTitle: {
 		fontSize: 34,
-		fontWeight: "700",
-		color: "#000000",
-		textAlign: "center",
-		marginBottom: 30,
-		fontFamily: "SFProDisplay-Bold",
+		fontWeight: "600",
+		color: "#000000", // System Black
+		textAlign: "left",
+		marginBottom: 24,
+		fontFamily: "SFProDisplay-Semibold",
+		letterSpacing: -0.41, // Ajuste de tipografía según iOS
 	},
 	iOSCard: {
-		backgroundColor: "#FFFFFF",
-		borderRadius: 15,
-		padding: 20,
-		marginBottom: 20
+		backgroundColor: "#FFFFFF", // System White
+		borderRadius: 10,
+		paddingVertical: 16,
+		paddingHorizontal: 16,
+		marginBottom: 16,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 0.5 },
+		shadowOpacity: 0.08,
+		shadowRadius: 2,
+		elevation: 2, // Para compatibilidad con Android, pero optimizado para iOS
 	},
 	iOSLabel: {
-		fontSize: 16,
+		fontSize: 13,
 		fontWeight: "600",
-		color: "#8E8E93",
-		marginBottom: 5,
+		color: "#8E8E93", // System Gray 2
+		marginBottom: 4,
 		fontFamily: "SFProText-Semibold",
+		letterSpacing: -0.08,
+		textTransform: "uppercase",
 	},
 	iOSText: {
-		fontSize: 18,
-		color: "#000000",
-		marginBottom: 15,
+		fontSize: 17,
+		color: "#000000", // System Black
+		marginBottom: 16,
 		fontFamily: "SFProText-Regular",
+		letterSpacing: -0.41,
 	},
-
+	iOSTextBlue: {
+		fontSize: 17,
+		color: "#007AFF", // System Black
+		marginBottom: 16,
+		fontFamily: "SFProText-Regular",
+		letterSpacing: -0.41,
+	},
 	// Estilos para Android (más básico y utilitario)
 	androidContainer: {
 		flex: 1,
