@@ -22,6 +22,7 @@ export default function Home() {
 					renderItem={({ item }) => <CategoryItem item={item} />}
 					itemDimension={150}
 					spacing={10}
+					ListFooterComponent={UserAuthButtons}
 				/>
 			)}
 		</Layout>
@@ -45,6 +46,30 @@ function CategoryItem({ item }: { item: QuizCategory }) {
 	);
 }
 
+function UserAuthButtons() {
+	const nav = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+	const handleLoginPress = () => {
+		nav.navigate("Login");
+	};
+
+	const handleResgisterPress = () => {
+		nav.navigate("Register");
+	};
+
+	return (
+		<Layout>
+			<TouchableOpacity style={styles.button} onPress={handleLoginPress}>
+				<Text style={styles.buttonText}>Login</Text>
+			</TouchableOpacity>
+
+			<TouchableOpacity style={styles.button} onPress={handleResgisterPress}>
+				<Text style={styles.buttonText}>Register</Text>
+			</TouchableOpacity>
+		</Layout>
+	);
+}
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -57,5 +82,18 @@ const styles = StyleSheet.create({
 	categoryTitle: {
 		fontSize: 20,
 		fontWeight: "semibold",
+	},
+	button: {
+		backgroundColor: "#007AFF",
+		borderRadius: 10,
+		padding: 14,
+		alignItems: "center",
+		margin: 10,
+	},
+	buttonText: {
+		color: "#FFFFFF",
+		fontSize: 17,
+		fontWeight: "600",
+		fontFamily: "SFProText-Semibold",
 	},
 });
