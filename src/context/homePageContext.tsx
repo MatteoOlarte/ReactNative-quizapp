@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 export interface HomeContextTypes {
 	categories?: QuizCategory[];
 	isLoading: boolean;
+	reaload: () => void
 }
 
 export const HomeContext = createContext<HomeContextTypes | undefined>(undefined);
@@ -18,11 +19,15 @@ export const HomeContextProvider = ({ children }: React.PropsWithChildren) => {
 		setIsLoading(false);
 	};
 
+	const reaload = async () => {
+		setCategories(await fetchAllCategories());
+	}
+
 	useEffect(() => {
 		fetchData();
 	}, []);
 
-	return <HomeContext.Provider value={{ categories, isLoading }}>{children}</HomeContext.Provider>;
+	return <HomeContext.Provider value={{ categories, isLoading, reaload }}>{children}</HomeContext.Provider>;
 };
 
 export const useHomeContext = () => {

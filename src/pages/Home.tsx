@@ -6,12 +6,30 @@ import { type QuizCategory } from "@/models/quiz";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Layout } from "@ui-kitten/components";
-import React from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Platform, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FlatGrid } from "react-native-super-grid";
 
 export default function Home() {
 	const contextHome = useHomeContext();
+	const contextUser = useUserAuthContext();
+	const [refreshing, setRefreshing] = useState<boolean>(false);
+
+	const onRefresh = async () => {
+		setRefreshing(true);
+
+		// Simulamos una operación asíncrona (como un fetch de datos)
+		await contextHome.reaload();
+		await contextUser.currentUser?.fetchPoints();
+		// Activamos el efecto háptico en iOS al completar la recarga
+		// if (Platform.OS === "ios") { Puto expo
+		// 	ReactNativeHapticFeedback.trigger("impactMedium", {
+		// 		enableVibrateFallback: true, // Si los hápticos no están disponibles, usa vibración
+		// 		ignoreAndroidSystemSettings: false,
+		// 	});
+		// }
+		setRefreshing(false);
+	};
 
 	if (contextHome.isLoading) return <LoadingView />;
 
@@ -25,6 +43,7 @@ export default function Home() {
 					spacing={10}
 					ListHeaderComponent={UserProfileView}
 					ListFooterComponent={UserAuthButtons}
+					refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 				/>
 			)}
 		</Layout>
@@ -91,9 +110,9 @@ function UserProfileView() {
 
 				<Text style={Platform.OS === "ios" ? styles.iOSLabel : styles.androidLabel}>Points</Text>
 
-				<Text style={Platform.OS === 'ios' ? styles.iOSTextBlue : styles.androidText}>
-          {contextUser.currentUser?.points ?? 0} pts
-        </Text>
+				<Text style={Platform.OS === "ios" ? styles.iOSTextBlue : styles.androidText}>
+					{contextUser.currentUser?.points ?? 0} pts
+				</Text>
 			</View>
 		</View>
 	);

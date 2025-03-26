@@ -1,5 +1,6 @@
 import { Question, fetchQuestionsFromQuiz } from "@/models/quiz";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useUserAuthContext } from "./userAuthContext";
 
 export interface PlaygroundContextTypes {
 	quizID?: string;
@@ -32,6 +33,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 	const [showResults, setShowResults] = useState<boolean>(false);
 	const [timeRemaining, setTimeRemaining] = useState<number>(TOTAL_TIME);
 	const timerRef = useRef<NodeJS.Timeout | undefined>();
+	const contextUser = useUserAuthContext()
 	
 	const fetchQuizData = async () => {
 		setIsLoading(true);
@@ -65,6 +67,7 @@ export const PlaygroundContextProvider = ({ children }: React.PropsWithChildren)
 		setCurrentScore(correntAnswers);
 		setShowResults(true);
 
+		contextUser.currentUser?.addPoints(points)
 		if (timerRef) clearInterval(timerRef.current);
 	};
 

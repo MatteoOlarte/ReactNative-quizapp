@@ -17,10 +17,10 @@ export default class User {
 		return result;
 	}
 
-	async fetchPoints(): Promise<number> {
+	async fetchPoints(force: boolean = false): Promise<number> {
 		// If points are already cached, return them
-		if (this.points !== undefined) {
-			return this.points;
+		if (this.points !== undefined || force) {
+			return this.points ?? 0;
 		}
 
 		try {
@@ -44,14 +44,50 @@ export default class User {
 
 			// Cache the points
 			this.points = fetchedPoints;
-      
+
 			return this.points;
 		} catch (error) {
 			throw new Error(`Failed to fetch points: ${error instanceof Error ? error.message : "Unknown error"}`);
 		}
 	}
 
-	async setPoints(): Promise<void> {}
+	async addPoints(points: number): Promise<void> {
+		try {
+			// Referencia al documento del usuario en Firestore
+			const firestore = firebase.firestore();
+			let userRef = firestore.collection("quiz-app").doc("users").collection("users").doc(this.id);
+
+			// Obtener el documento actual del usuario
+			let userDoc = await userRef.get();
+
+			// Verificar si el documento existe
+			if (!userDoc.exists) {
+				throw new Error("User document does not exist");
+			}
+
+			// Obtener los puntos actuales
+			const data = userDoc.data();
+			const currentPoints = data?.points;
+
+			// Validar que los puntos actuales sean un número
+			if (typeof currentPoints !== "number") {
+				throw new Error("Current points field is missing or invalid");
+			}
+
+			// Calcular los nuevos puntos
+			const newPoints = currentPoints + points;
+
+			// Actualizar los puntos en Firestore
+			await userRef.update({
+				points: newPoints,
+			});
+
+			// Actualizar el caché local
+			this.points = newPoints;
+		} catch (error) {
+			throw new Error(`Failed to add points: ${error instanceof Error ? error.message : "Unknown error"}`);
+		}
+	}
 }
 
 export async function loginUserWithEmailAndPassword(email: string, password: string): Promise<User | null> {
