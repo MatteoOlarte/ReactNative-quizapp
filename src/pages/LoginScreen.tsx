@@ -1,21 +1,24 @@
-import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-
-export interface LoginScreenProps {
-	onLogin?: (email: string, password: string) => Promise<void>;
-}
+import { RootStackParamList } from "@/config/App";
+import { useUserAuthContext } from "@/context/userAuthContext";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useRef, useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 
 type LoginForm = {
 	email: string;
 	password: string;
 };
 
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function LoginScreen() {
 	const [form, setForm] = useState<LoginForm>({
 		email: "",
 		password: "",
 	});
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const context = useUserAuthContext();
+	const emailRef = useRef<TextInput>(null);
+	const passwordRef = useRef<TextInput>(null);
+	const nav = useNavigation<StackNavigationProp<RootStackParamList>>();
 
 	const handleInputChange = (field: keyof LoginForm, value: string) => {
 		setForm((prev) => ({
@@ -23,23 +26,13 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 			[field]: value,
 		}));
 	};
-  
-	const handleLogin = async () => {
-		if (!form.email || !form.password) {
-			Alert.alert("Error", "Please fill in all fields");
-			return;
-		}
 
-		setIsLoading(true);
+	const handleLogin = async () => {
 		try {
-			if (onLogin) {
-				await onLogin(form.email, form.password);
-			}
-			setForm({ email: "", password: "" });
+			await context.loginWithEmailAndPassword(form.email, form.password);
+			nav.navigate("Home");
 		} catch (error) {
 			Alert.alert("Login Failed", error instanceof Error ? error.message : "An error occurred");
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
@@ -47,6 +40,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 		<View style={styles.container}>
 			<View style={styles.inputContainer}>
 				<TextInput
+					ref={emailRef}
 					style={styles.input}
 					placeholder="Email"
 					placeholderTextColor="#8E8E93"
@@ -54,24 +48,29 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 					onChangeText={(text) => handleInputChange("email", text)}
 					keyboardType="email-address"
 					autoCapitalize="none"
-					editable={!isLoading}
+					editable={!context.isLoading}
+					returnKeyType="next"
+					onSubmitEditing={() => passwordRef.current?.focus()}
 				/>
 				<TextInput
+					ref={passwordRef}
 					style={styles.input}
 					placeholder="Password"
 					placeholderTextColor="#8E8E93"
 					value={form.password}
 					onChangeText={(text) => handleInputChange("password", text)}
 					secureTextEntry
-					editable={!isLoading}
+					editable={!context.isLoading}
+					returnKeyType="go"
+					onSubmitEditing={handleLogin}
 				/>
 			</View>
 			<TouchableOpacity
-				style={[styles.button, isLoading && styles.buttonDisabled]}
+				style={[styles.button, context.isLoading && styles.buttonDisabled]}
 				onPress={handleLogin}
-				disabled={isLoading}
+				disabled={context.isLoading}
 			>
-				<Text style={styles.buttonText}>{isLoading ? "Logging in..." : "Login"}</Text>
+				<Text style={styles.buttonText}>{context.isLoading ? "Logging in..." : "Login"}</Text>
 			</TouchableOpacity>
 		</View>
 	);

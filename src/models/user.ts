@@ -2,8 +2,8 @@ import { firebase } from "@/config/config";
 
 export default class User {
 	readonly id: string;
-	readonly name: string;
-	readonly email: string;
+	name: string;
+	email: string;
 
 	constructor(id: string, name: string, email: string) {
 		this.id = id;
